@@ -1,0 +1,11 @@
+with cte1 AS
+(
+select user_id, count(tweet_id) as tweet_bucket 
+from tweets
+WHERE tweet_date between '01/01/2022 00:00:00' and '12/31/2022 00:00:00'
+group by user_id
+)
+
+select tweet_bucket,count(user_id) as users_num
+from cte1
+group by tweet_bucket
