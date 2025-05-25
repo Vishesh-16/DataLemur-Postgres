@@ -1,4 +1,35 @@
 select p.page_id
 from pages p left join page_likes pl on p.page_id = pl.page_id
 where pl.page_id is NULL
-order by 1
+order by 1;
+
+--------
+
+SELECT p.page_id
+FROM pages p
+WHERE p.page_id NOT IN (
+  SELECT page_id FROM page_likes WHERE page_id IS NOT NULL
+);
+
+---------
+
+SELECT p.page_id
+from pages p
+where p.page_id not in (select page_id from page_likes pl);
+
+-----------
+
+SELECT page_id
+FROM pages p
+WHERE NOT EXISTS (
+  SELECT 1 FROM page_likes pl
+  WHERE pl.page_id = p.page_id
+);
+
+------------
+
+SELECT p.page_id
+FROM pages p
+LEFT JOIN page_likes pl ON p.page_id = pl.page_id
+WHERE pl.page_id IS NULL;
+
