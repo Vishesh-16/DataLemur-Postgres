@@ -1,0 +1,12 @@
+with cte as
+(
+  select t.order_id, t.user_id, u.city
+  from trades t join users u on t.user_id = u.user_id
+  where status = 'Completed'
+) 
+
+select city, count(*) as total_orders
+from cte
+group by city
+order by 2 desc
+limit 3
