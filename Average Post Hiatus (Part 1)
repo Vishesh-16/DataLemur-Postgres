@@ -1,0 +1,13 @@
+with user_cte as
+(
+select user_id
+from posts
+where extract(year from post_date) = '2021'
+group by user_id
+having count(*) > 1
+)
+
+select p.user_id, (max(post_date)::date - min(post_date)::date) AS difference_in_days
+from posts p join user_cte c on p.user_id = c.user_id
+group by p.user_id
+order by 1 desc
