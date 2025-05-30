@@ -1,0 +1,7 @@
+select user_id, spend, transaction_date
+from
+(
+select *,rank()over(partition by user_id order by transaction_date asc) as rnk
+from transactions
+)tb1
+where rnk = 3
