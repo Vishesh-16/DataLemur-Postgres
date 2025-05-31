@@ -1,0 +1,7 @@
+select salary as second_highest_salary
+FROM
+(
+select *, rank()over(order by salary desc) as rnk
+from employee
+) a
+where rnk = 2
