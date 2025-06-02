@@ -1,0 +1,45 @@
+with month_cte as
+(
+select user_id, mnth
+FROM
+(
+select user_id, extract(month from "event_date") as mnth, extract(year from "event_date") as yr
+from user_actions
+where event_type in ('sign-in','like','comment')
+)tb1
+where mnth = 6 or mnth = 7 and yr = '2022'
+)
+
+select 7 as mth, count(distinct user_id) as monthly_active_users
+from
+(
+select user_id, count(distinct mnth) as mnths
+from month_cte
+group by user_id
+)tb2
+where mnths = 2
+
+----------------------------------------------------------------------------------------------------
+
+with month_cte as
+(
+select user_id, extract(month from "event_date") as mnth, extract(year from "event_date")
+from user_actions
+where event_type in ('sign-in','like','comment')
+),
+june_cte as
+(
+select user_id,mnth 
+from month_cte
+where mnth = 6
+),
+july_cte as
+(
+select user_id,mnth 
+from month_cte
+where mnth = 7
+)
+
+select 7 as mth,count(distinct a.user_id) as monthly_active_users
+from june_cte a join july_cte b 
+on a.user_id = b.user_id
