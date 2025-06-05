@@ -43,3 +43,32 @@ where mnth = 7
 select 7 as mth,count(distinct a.user_id) as monthly_active_users
 from june_cte a join july_cte b 
 on a.user_id = b.user_id
+
+----------------------------------------------------------------------------------------------
+
+with july as
+(select extract(month from event_date) as mnth,extract(year from event_date) as yr, user_id
+from user_actions
+where extract(month from event_date) = 7),
+
+june as
+(select extract(month from event_date) as mnth,extract(year from event_date) as yr, user_id
+from user_actions
+where extract(month from event_date) = 6)
+
+select jl.mnth as month, count(distinct jl.user_id) as monthly_active_users
+from july jl join june jn 
+on jl.user_id = jn.user_id
+group by 1
+
+----------------------------------------------------------------------------------------------
+
+select extract(month from event_date) as month, count(distinct user_id)
+from user_actions
+where extract(month from event_date) = 7
+and user_id in  (select user_id
+                 from user_actions
+                 where extract(month from event_date) = 6)
+group by 1
+
+----------------------------------------------------------------------------------------------
