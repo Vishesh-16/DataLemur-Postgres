@@ -1,0 +1,9 @@
+select app_id, round(((click * 100.0) / impressions),2) as ctr
+from
+(
+select app_id, sum(CASE WHEN event_type = 'click' then 1 else 0 end) as click,
+sum(CASE WHEN event_type = 'impression' then 1 else 0 end) as impressions
+from events
+where extract(year from timestamp) = '2022'
+group by 1
+)tb1
