@@ -1,0 +1,46 @@
+
+with date_range_cte as
+(
+select employee_id, query_id
+from queries 
+where query_starttime::date between '07/01/2023' and  '09/30/2023'
+),
+
+no_record_cte as
+(
+select e.employee_id as emp_id, query_id
+FROM
+employees e left join date_range_cte drc
+on e.employee_id = drc.employee_id
+),
+
+unique_queries_count as
+(
+select emp_id, count(distinct query_id) as unique_queries
+from no_record_cte
+group by 1
+)
+
+select unique_queries, count(*) AS employee_count
+from unique_queries_count
+group by unique_queries
+order by unique_queries;
+
+--------------------------------------------------------------------------
+
+SELECT
+    COALESCE(query_counts.unique_queries, 0) AS unique_queries,
+    COUNT(e.employee_id) AS employee_count
+FROM employees e
+LEFT JOIN (
+    SELECT
+        employee_id,
+        COUNT(DISTINCT query_id) AS unique_queries
+    FROM queries
+    WHERE query_starttime >= '2023-07-01'
+      AND query_starttime < '2023-10-01'
+    GROUP BY employee_id
+) AS query_counts
+ON e.employee_id = query_counts.employee_id
+GROUP BY COALESCE(query_counts.unique_queries, 0)
+ORDER BY unique_queries;
