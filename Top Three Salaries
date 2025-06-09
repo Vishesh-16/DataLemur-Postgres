@@ -1,0 +1,8 @@
+select department_name, name, salary
+from
+(select name, salary, department_name, 
+       dense_rank()over(partition by e.department_id order by salary desc) as ranked
+from employee e join department d
+on e.department_id = d.department_id)tb1
+where ranked < 4
+order by 1,3 desc,2
